@@ -1,10 +1,25 @@
-from Lector import Reader
+from Lector import Lector
+from Analizador import Analizador
 
-leer = Reader()
+leer = Lector()
+analizar = Analizador()
 
-partidos = leer.read()
+partidos = leer.leer()
 
-for i in partidos:
-    print('JORNADA {:<5} {:<25} VS    {:<25} FINAL: {}-{}'.format(i.getJornada(),i.getLocal(),i.getVisitante(),i.getGolesL(),i.getGolesV()))
+comando = 'RESULTADO "Real Madrid" VS "Villarreal" TEMPORADA <2019-2020>'
 
-comando = 'RESULTADO "RealMadrid" VS "Villarreal" TEMPORADA <2019-2020>'
+analizar.analizar(comando)
+analizar.imprimirTokens()
+analizar.imprimirErrores()
+
+comando = 'JORNADA 15 TEMPORADA <2019-2020>'
+
+analizar.analizar(comando)
+analizar.imprimirTokens()
+analizar.imprimirErrores()
+
+comando = 'GOLES TOTAL "Real Madrid" TEMPORADA <2019-2020>'
+
+analizar.analizar(comando)
+analizar.imprimirTokens()
+analizar.imprimirErrores()
