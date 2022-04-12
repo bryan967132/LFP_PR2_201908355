@@ -17,6 +17,7 @@ class Analizador:
     
     def agregarError(self,caracter,linea,columna):
         self.listaErrores.append(Error('Caracter \'' + caracter + '\' no reconocido',linea,columna))
+        self.buffer = ''
 
     def s0(self,caracter):
         '''Estado 0'''
