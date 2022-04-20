@@ -8,5 +8,5 @@ class Lector:
         partidosF = partidosF.split('\n')
         for i in range(1,len(partidosF)):
             info = partidosF[i].split(',')
-            self.partidos.append(Partido(info[0],info[1],info[2],info[3],info[4],info[5],info[6]))
+            self.partidos.append(Partido(info[0],info[1],int(info[2]),info[3],info[4],int(info[5]),int(info[6])))
         return self.partidos
