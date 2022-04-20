@@ -1,7 +1,7 @@
 from Token import Token
 from Error import Error
 from prettytable import PrettyTable
-class Analizador:
+class AnalizadorLexico:
     def __init__(self):
         self.listaTokens = []
         self.listaErrores = []

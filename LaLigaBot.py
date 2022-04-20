@@ -1,8 +1,8 @@
 from Lector import Lector
-from Analizador import Analizador
+from AnalizadorLexico import AnalizadorLexico
 
 leer = Lector()
-lexico = Analizador()
+lexico = AnalizadorLexico()
 
 partidos = leer.leer()
 

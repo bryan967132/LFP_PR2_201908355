@@ -1,9 +1,9 @@
 from Lector import Lector
-from Analizador import Analizador
+from AnalizadorLexico import AnalizadorLexico
 from Controlador import Ctrl
 
 leer = Lector()
-lexico = Analizador()
+lexico = AnalizadorLexico()
 
 base_datos = leer.leer()
 
