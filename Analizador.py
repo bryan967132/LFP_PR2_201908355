@@ -19,6 +19,12 @@ class Analizador:
         self.listaErrores.append(Error('Caracter \'' + caracter + '\' no reconocido',linea,columna))
         self.buffer = ''
 
+    def limpiarTokens(self):
+        self.listaTokens = []
+    
+    def limpiarErrores(self):
+        self.listaErrores = []
+
     def s0(self,caracter):
         '''Estado 0'''
         if caracter.isalpha():

@@ -2,24 +2,22 @@ from Lector import Lector
 from Analizador import Analizador
 
 leer = Lector()
-analizar = Analizador()
+lexico = Analizador()
 
 partidos = leer.leer()
 
-comando = 'RESULTADO "Real Madrid" VS "Villarreal" TEMPORADA <2019-2020>'
+comando = 'RESuLTADO "Real Madrid" VS "Villarreal" TEMPORADA <2019-2020>'
 
-analizar.analizar(comando)
-analizar.imprimirTokens()
-analizar.imprimirErrores()
+lexico.analizar(comando)
+lexico.imprimirTokens()
+lexico.imprimirErrores()
 
 comando = 'JORNADA 15 TEMPORADA <2019-2020>'
-
-analizar.analizar(comando)
-analizar.imprimirTokens()
-analizar.imprimirErrores()
+lexico.analizar(comando)
+lexico.imprimirTokens()
+lexico.imprimirErrores()
 
 comando = 'GOLES TOTAL "Real Madrid" TEMPORADA <2019-2020>'
-
-analizar.analizar(comando)
-analizar.imprimirTokens()
-analizar.imprimirErrores()
+lexico.analizar(comando)
+lexico.imprimirTokens()
+lexico.imprimirErrores()
