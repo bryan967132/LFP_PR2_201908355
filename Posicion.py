@@ -1,9 +1,11 @@
 class Posicion:
-    def __init__(self,equipo,pG,pE,pP,puntos):
+    def __init__(self,equipo,pG,pE,pP,gF,gC,puntos):
         self.setEquipo(equipo)
         self.setPG(pG)
         self.setPE(pE)
         self.setPP(pP)
+        self.setGF(gF)
+        self.setGC(gC)
         self.setPuntos(puntos)
 
     def getEquipo(self):
@@ -29,6 +31,18 @@ class Posicion:
 
     def setPP(self,pP):
         self.pP = pP
+
+    def getGF(self):
+        return self.gF
+    
+    def setGF(self,gF):
+        self.gF = gF
+
+    def getGC(self):
+        return self.gC
+    
+    def setGC(self,gC):
+        self.gC = gC
 
     def getPuntos(self):
         return self.puntos

@@ -58,8 +58,8 @@ class Ctrl:
         for partido in self.db:
             if partido.getTemporada() == temporada:
                 if partido.getJornada() == 1:
-                    tabla.append(Posicion(partido.getLocal(),0,0,0,0))
-                    tabla.append(Posicion(partido.getVisitante(),0,0,0,0))
+                    tabla.append(Posicion(partido.getLocal(),0,0,0,0,0,0))
+                    tabla.append(Posicion(partido.getVisitante(),0,0,0,0,0,0))
                 elif partido.getJornada() == 2:
                     break
         
@@ -75,6 +75,8 @@ class Ctrl:
                             posicion.setPuntos(posicion.getPuntos() + 1)
                         elif partido.getGolesL() < partido.getGolesV():
                             posicion.setPP(posicion.getPP() + 1)
+                        posicion.setGF(posicion.getGF() + partido.getGolesL())
+                        posicion.setGC(posicion.getGC() + partido.getGolesV())
                     elif partido.getVisitante() == posicion.getEquipo():
                         if partido.getGolesL() < partido.getGolesV():
                             posicion.setPG(posicion.getPG() + 1)
@@ -84,16 +86,37 @@ class Ctrl:
                             posicion.setPuntos(posicion.getPuntos() + 1)
                         elif partido.getGolesL() > partido.getGolesV():
                             posicion.setPP(posicion.getPP() + 1)
+                        posicion.setGF(posicion.getGF() + partido.getGolesV())
+                        posicion.setGC(posicion.getGC() + partido.getGolesL())
         
         for i in range(len(tabla) - 1):
             for j in range(len(tabla) - i - 1):
                 if tabla[j].getPuntos() < tabla[j + 1].getPuntos():
                     tabla[j],tabla[j + 1] = tabla[j + 1],tabla[j]
+                elif tabla[j].getPuntos() == tabla[j + 1].getPuntos():
+                    golesActual = tabla[j].getGF() - tabla[j].getGC()
+                    golesSiguiente = tabla[j + 1].getGF() - tabla[j + 1].getGC()
+                    if golesActual < golesSiguiente:
+                        print(tabla[j].getEquipo(),tabla[j + 1].getEquipo())
+                        tabla[j],tabla[j + 1] = tabla[j + 1],tabla[j]
 
         clasificacion = PrettyTable()
-        clasificacion.field_names = ['','Equipo','G','E','P','Pts']
+        clasificacion.field_names = ['','Equipo','Pts.','PJ','G','E','P','GF','GC','DG']
         num = 1
         for posicion in tabla:
-            clasificacion.add_row([num,posicion.getEquipo(),posicion.getPG(),posicion.getPE(),posicion.getPP(),posicion.getPuntos()])
+            clasificacion.add_row(
+                [
+                    num,
+                    posicion.getEquipo(),
+                    posicion.getPuntos(),
+                    posicion.getPG() + posicion.getPE() + posicion.getPP(),
+                    posicion.getPG(),
+                    posicion.getPE(),
+                    posicion.getPP(),
+                    posicion.getGF(),
+                    posicion.getGC(),
+                    posicion.getGF() - posicion.getGC()
+                ]
+            )
             num += 1
         print(clasificacion)

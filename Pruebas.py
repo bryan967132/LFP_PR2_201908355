@@ -50,7 +50,7 @@ print()
 #lexico.imprimirTokens()
 #lexico.imprimirErrores()
 
-comando6 = 'TABLA TEMPORADA <2019-2020>'
+comando6 = 'TABLA TEMPORADA <2011-2012>'
 print(comando6)
-ctrl.tablaTemporada('2019','2020')
+ctrl.tablaTemporada('2011','2012')
 print()
