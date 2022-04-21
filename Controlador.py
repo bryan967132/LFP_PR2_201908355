@@ -54,6 +54,28 @@ class Ctrl:
     def tablaTemporada(self,año1,año2,archivo = 'temporada'):
         archivo += '.html'
         temporada = año1 + '-' + año2
+        tabla = self.simularTemporada(temporada)
+
+        clasificacion = PrettyTable()
+        clasificacion.field_names = ['','Equipo','Pts.','PJ','G','E','P','GF','GC','DG']
+        for i in range(len(tabla)):
+            clasificacion.add_row(
+                [
+                    i + 1,
+                    tabla[i].getEquipo(),
+                    tabla[i].getPuntos(),
+                    tabla[i].getPG() + tabla[i].getPE() + tabla[i].getPP(),
+                    tabla[i].getPG(),
+                    tabla[i].getPE(),
+                    tabla[i].getPP(),
+                    tabla[i].getGF(),
+                    tabla[i].getGC(),
+                    tabla[i].getGF() - tabla[i].getGC()
+                ]
+            )
+        print(clasificacion)
+
+    def simularTemporada(self,temporada):
         tabla = []
         for partido in self.db:
             if partido.getTemporada() == temporada:
@@ -97,26 +119,45 @@ class Ctrl:
                     golesActual = tabla[j].getGF() - tabla[j].getGC()
                     golesSiguiente = tabla[j + 1].getGF() - tabla[j + 1].getGC()
                     if golesActual < golesSiguiente:
-                        print(tabla[j].getEquipo(),tabla[j + 1].getEquipo())
                         tabla[j],tabla[j + 1] = tabla[j + 1],tabla[j]
 
+        return tabla
+
+    def temporadaEquipo(self,equipo,año1,año2,archivo = 'partidos',numJi = 1,numJf = 38):
+        archivo += '.html'
+        temporada = año1 + '-' + año2
+        for partido in self.db:
+            if partido.getTemporada() == temporada:
+                if partido.getJornada() >= numJi and partido.getJornada() <= numJf:
+                    if partido.getLocal() == equipo:
+                        print('Jornada',partido.getJornada(),partido.getLocal(),partido.getGolesL(),'-',partido.getVisitante(),partido.getGolesV())
+                    elif partido.getVisitante() == equipo:
+                        print('Jornada',partido.getJornada(),partido.getLocal(),partido.getGolesL(),'-',partido.getVisitante(),partido.getGolesV())
+    
+    def topEquipos(self,condicion,año1,año2,top = 5):
+        temporada = año1 + '-' + año2
+        tabla = self.simularTemporada(temporada)
         clasificacion = PrettyTable()
         clasificacion.field_names = ['','Equipo','Pts.','PJ','G','E','P','GF','GC','DG']
-        num = 1
-        for posicion in tabla:
+        if condicion == 'SUPERIOR':
+            inferior = 0
+            superior = top
+        elif condicion == 'INFERIOR':
+            inferior = len(tabla) - top
+            superior = len(tabla)
+        for i in range(inferior,superior):
             clasificacion.add_row(
                 [
-                    num,
-                    posicion.getEquipo(),
-                    posicion.getPuntos(),
-                    posicion.getPG() + posicion.getPE() + posicion.getPP(),
-                    posicion.getPG(),
-                    posicion.getPE(),
-                    posicion.getPP(),
-                    posicion.getGF(),
-                    posicion.getGC(),
-                    posicion.getGF() - posicion.getGC()
+                    i + 1,
+                    tabla[i].getEquipo(),
+                    tabla[i].getPuntos(),
+                    tabla[i].getPG() + tabla[i].getPE() + tabla[i].getPP(),
+                    tabla[i].getPG(),
+                    tabla[i].getPE(),
+                    tabla[i].getPP(),
+                    tabla[i].getGF(),
+                    tabla[i].getGC(),
+                    tabla[i].getGF() - tabla[i].getGC()
                 ]
             )
-            num += 1
         print(clasificacion)
