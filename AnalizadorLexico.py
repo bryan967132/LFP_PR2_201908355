@@ -51,6 +51,10 @@ class AnalizadorLexico:
             self.estado = 7
             self.buffer += caracter
             self.columna += 1
+        elif caracter == '-':
+            self.estado = 8
+            self.buffer += caracter
+            self.columna += 1
         elif caracter == '\n':
             self.linea += 1
             self.columna = 1
@@ -63,7 +67,7 @@ class AnalizadorLexico:
             self.agregarError(caracter,self.linea,self.columna)
     
     def s1(self,caracter):
-        if caracter.upper().isalpha():
+        if caracter.isalpha():
             self.estado = 1
             self.buffer += caracter
             self.columna += 1
@@ -116,6 +120,17 @@ class AnalizadorLexico:
             self.agregarToken(self.buffer,self.linea,self.columna,'numero')
             self.estado = 0
             self.i -= 1
+    
+    def s8(self,caracter):
+        if caracter.isalpha():
+            self.estado = 8
+            self.buffer += caracter
+            self.columna += 1
+        else:
+            if self.buffer in ['-f','-ji','-jf','-n']:
+                self.agregarToken(self.buffer,self.linea,self.columna,'bandera_' + self.buffer)
+                self.estado = 0
+                self.i -= 1
 
     def analizar(self,cadena):
         cadena += '$'
@@ -137,6 +152,8 @@ class AnalizadorLexico:
                 self.s6()
             elif self.estado == 7:
                 self.s7(cadena[self.i])
+            elif self.estado == 8:
+                self.s8(cadena[self.i])
             self.i += 1
 
     def imprimirTokens(self):
