@@ -1,3 +1,5 @@
+from prettytable import PrettyTable
+from Posicion import Posicion
 class Ctrl:
     def __init__(self,db):
         self.db = db
@@ -48,3 +50,50 @@ class Ctrl:
                 if partido.getVisitante() == equipo:
                     goles += partido.getGolesV()
         print('Los goles anotados por',equipo,'de visitante en la temporada',temporada,'fueron',goles)
+    
+    def tablaTemporada(self,año1,año2,archivo = 'temporada'):
+        archivo += '.html'
+        temporada = año1 + '-' + año2
+        tabla = []
+        for partido in self.db:
+            if partido.getTemporada() == temporada:
+                if partido.getJornada() == 1:
+                    tabla.append(Posicion(partido.getLocal(),0,0,0,0))
+                    tabla.append(Posicion(partido.getVisitante(),0,0,0,0))
+                elif partido.getJornada() == 2:
+                    break
+        
+        for posicion in tabla:
+            for partido in self.db:
+                if partido.getTemporada() == temporada:
+                    if partido.getLocal() == posicion.getEquipo():
+                        if partido.getGolesL() > partido.getGolesV():
+                            posicion.setPG(posicion.getPG() + 1)
+                            posicion.setPuntos(posicion.getPuntos() + 3)
+                        elif partido.getGolesL() == partido.getGolesV():
+                            posicion.setPE(posicion.getPE() + 1)
+                            posicion.setPuntos(posicion.getPuntos() + 1)
+                        elif partido.getGolesL() < partido.getGolesV():
+                            posicion.setPP(posicion.getPP() + 1)
+                    elif partido.getVisitante() == posicion.getEquipo():
+                        if partido.getGolesL() < partido.getGolesV():
+                            posicion.setPG(posicion.getPG() + 1)
+                            posicion.setPuntos(posicion.getPuntos() + 3)
+                        elif partido.getGolesL() == partido.getGolesV():
+                            posicion.setPE(posicion.getPE() + 1)
+                            posicion.setPuntos(posicion.getPuntos() + 1)
+                        elif partido.getGolesL() > partido.getGolesV():
+                            posicion.setPP(posicion.getPP() + 1)
+        
+        for i in range(len(tabla) - 1):
+            for j in range(len(tabla) - i - 1):
+                if tabla[j].getPuntos() < tabla[j + 1].getPuntos():
+                    tabla[j],tabla[j + 1] = tabla[j + 1],tabla[j]
+
+        clasificacion = PrettyTable()
+        clasificacion.field_names = ['','Equipo','G','E','P','Pts']
+        num = 1
+        for posicion in tabla:
+            clasificacion.add_row([num,posicion.getEquipo(),posicion.getPG(),posicion.getPE(),posicion.getPP(),posicion.getPuntos()])
+            num += 1
+        print(clasificacion)
