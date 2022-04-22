@@ -10,6 +10,9 @@ base_datos = leer.leer()
 ctrl = Ctrl(base_datos)
 
 comandoPrueba = 'RESULTADO "Real Madrid" VS "Villarreal" TEMPORADA <2019-2020>'
+comandoPrueba = 'GOLES TOTAL "Valencia" TEMPORADA <1998-1999>'
+comandoPrueba = 'JORNADA 12 TEMPORADA <2019-2020> -f jornada12Reporte'
+comandoPrueba = 'PARTIDOS "Real Madrid" as5df { @ error } TEMPORADA <1999-2000> -f temporadafinal -ji 1 -jf 18'
 lexico.analizar(comandoPrueba)
 lexico.imprimirTokens()
 lexico.imprimirErrores()

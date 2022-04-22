@@ -40,19 +40,7 @@ class AnalizadorLexico:
             self.buffer += caracter
             self.columna += 1
         elif caracter == '-':
-            self.estado = 5
-            self.buffer += caracter
-            self.columna += 1
-        elif caracter == '>':
-            self.estado = 6
-            self.buffer += caracter
-            self.columna += 1
-        elif caracter.isdigit():
-            self.estado = 7
-            self.buffer += caracter
-            self.columna += 1
-        elif caracter == '-':
-            self.estado = 8
+            self.estado = 9
             self.buffer += caracter
             self.columna += 1
         elif caracter == '\n':
@@ -67,7 +55,7 @@ class AnalizadorLexico:
             self.agregarError(caracter,self.linea,self.columna)
     
     def s1(self,caracter):
-        if caracter.isalpha():
+        if caracter.isalpha() or caracter.isdigit():
             self.estado = 1
             self.buffer += caracter
             self.columna += 1
@@ -82,7 +70,7 @@ class AnalizadorLexico:
                 self.i -= 1
     
     def s2(self,caracter):
-        if caracter.isalpha() or caracter.isdigit() or caracter in ['\t',' ']:
+        if caracter != '"':
             self.estado = 2
             self.buffer += caracter
             self.columna += 1
@@ -92,23 +80,28 @@ class AnalizadorLexico:
             self.columna += 1
     
     def s3(self):
-        self.agregarToken(self.buffer,self.linea,self.columna,'nomEquipo')
+        self.agregarToken(self.buffer,self.linea,self.columna,'equipo')
         self.estado = 0
         self.i -= 1
     
     def s4(self):
-        self.agregarToken(self.buffer,self.linea,self.columna,'mayorQue')
-        self.estado = 0
-        self.i -= 1
-
-    def s5(self):
-        self.agregarToken(self.buffer,self.linea,self.columna,'guion')
-        self.estado = 0
-        self.i -= 1
-
-    def s6(self):
         self.agregarToken(self.buffer,self.linea,self.columna,'menorQue')
-        self.estado = 0
+        self.estado = 5
+        self.i -= 1
+    
+    def s5(self,caracter):
+        if caracter.isdigit():
+            self.estado = 5
+            self.buffer += caracter
+            self.columna += 1
+        else:
+            self.agregarToken(self.buffer,self.linea,self.columna,'numero')
+            self.estado = 6
+            self.buffer += caracter
+    
+    def s6(self):
+        self.agregarToken(self.buffer,self.linea,self.columna,'guion')
+        self.estado = 7
         self.i -= 1
     
     def s7(self,caracter):
@@ -118,19 +111,52 @@ class AnalizadorLexico:
             self.columna += 1
         else:
             self.agregarToken(self.buffer,self.linea,self.columna,'numero')
-            self.estado = 0
-            self.i -= 1
-    
-    def s8(self,caracter):
-        if caracter.isalpha():
             self.estado = 8
+            self.buffer += caracter
+    
+    def s8(self):
+        self.agregarToken(self.buffer,self.linea,self.columna,'mayorQue')
+        self.estado = 0
+        self.i -= 1
+    
+    def s9(self,caracter):
+        if caracter.isalpha():
+            self.estado = 9
             self.buffer += caracter
             self.columna += 1
         else:
-            if self.buffer in ['-f','-ji','-jf','-n']:
-                self.agregarToken(self.buffer,self.linea,self.columna,'bandera_' + self.buffer)
+            if self.buffer in ['-f']:
+                self.agregarToken(self.buffer,self.linea,self.columna,'bandera_' + self.buffer.replace('-',''))
+                self.estado = 10
+                self.buffer += caracter
+            elif self.buffer in ['-ji','-jf','-n']:
+                self.agregarToken(self.buffer,self.linea,self.columna,'bandera_' + self.buffer.replace('-',''))
+                self.estado = 11
+                self.buffer += caracter
+            else:
+                self.agregarError(self.buffer,self.linea,self.columna)
                 self.estado = 0
                 self.i -= 1
+    
+    def s10(self,caracter):
+        if (caracter.isalpha() or caracter.isdigit()) and caracter != '"' and caracter != ' ':
+            self.estado = 10
+            self.buffer += caracter
+            self.columna += 1
+        else:
+            self.agregarToken(self.buffer,self.linea,self.columna,'cadena')
+            self.estado = 0
+            self.i -= 1
+    
+    def s11(self,caracter):
+        if caracter.isdigit() and caracter != '"' and caracter != ' ':
+            self.estado = 11
+            self.buffer += caracter
+            self.columna += 1
+        else:
+            self.agregarToken(self.buffer,self.linea,self.columna,'numero')
+            self.estado = 0
+            self.i -= 1
 
     def analizar(self,cadena):
         cadena += '$'
@@ -147,13 +173,19 @@ class AnalizadorLexico:
             elif self.estado == 4:
                 self.s4()
             elif self.estado == 5:
-                self.s5()
+                self.s5(cadena[self.i])
             elif self.estado == 6:
                 self.s6()
             elif self.estado == 7:
                 self.s7(cadena[self.i])
             elif self.estado == 8:
-                self.s8(cadena[self.i])
+                self.s8()
+            elif self.estado == 9:
+                self.s9(cadena[self.i])
+            elif self.estado == 10:
+                self.s10(cadena[self.i])
+            elif self.estado == 11:
+                self.s11(cadena[self.i])
             self.i += 1
 
     def imprimirTokens(self):
