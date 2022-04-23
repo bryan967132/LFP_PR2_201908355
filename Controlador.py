@@ -51,7 +51,7 @@ class Ctrl:
                     goles += partido.getGolesV()
         print('Los goles anotados por',equipo,'de visitante en la temporada',temporada,'fueron',goles)
     
-    def tablaTemporada(self,año1,año2,archivo = 'temporada'):
+    def tabla(self,año1,año2,archivo = 'temporada'):
         archivo += '.html'
         temporada = año1 + '-' + año2
         tabla = self.simularTemporada(temporada)
@@ -123,7 +123,7 @@ class Ctrl:
 
         return tabla
 
-    def temporadaEquipo(self,equipo,año1,año2,archivo = 'partidos',numJi = 1,numJf = 38):
+    def partidos(self,equipo,año1,año2,archivo = 'partidos',numJi = 1,numJf = 38):
         archivo += '.html'
         temporada = año1 + '-' + año2
         for partido in self.db:
@@ -134,7 +134,7 @@ class Ctrl:
                     elif partido.getVisitante() == equipo:
                         print('Jornada',partido.getJornada(),partido.getLocal(),partido.getGolesL(),'-',partido.getVisitante(),partido.getGolesV())
     
-    def topEquipos(self,condicion,año1,año2,top = 5):
+    def top(self,condicion,año1,año2,top = 5):
         temporada = año1 + '-' + año2
         tabla = self.simularTemporada(temporada)
         clasificacion = PrettyTable()

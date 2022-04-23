@@ -13,6 +13,7 @@ class AnalizadorLexico:
     
     def agregarToken(self,caracter,linea,columna,token):
         self.listaTokens.append(Token(caracter,linea,columna,token))
+        self.listaTokensC.append(Token(caracter,linea,columna,token))
         self.buffer = ''
     
     def agregarError(self,caracter,linea,columna):
@@ -37,6 +38,10 @@ class AnalizadorLexico:
             self.columna += 1
         elif caracter == '<':
             self.estado = 4
+            self.buffer += caracter
+            self.columna += 1
+        elif caracter.isdigit():
+            self.estado = 5
             self.buffer += caracter
             self.columna += 1
         elif caracter == '-':
@@ -80,7 +85,7 @@ class AnalizadorLexico:
             self.columna += 1
     
     def s3(self):
-        self.agregarToken(self.buffer,self.linea,self.columna,'equipo')
+        self.agregarToken(self.buffer,self.linea,self.columna,'nomEquipo')
         self.estado = 0
         self.i -= 1
     
@@ -95,9 +100,13 @@ class AnalizadorLexico:
             self.buffer += caracter
             self.columna += 1
         else:
-            self.agregarToken(self.buffer,self.linea,self.columna,'numero')
-            self.estado = 6
-            self.buffer += caracter
+            if self.buffer != '':
+                self.agregarToken(self.buffer,self.linea,self.columna,'numero')
+            if caracter == '-':
+                self.estado = 6
+                self.buffer += caracter
+            else:
+                self.estado = 7
     
     def s6(self):
         self.agregarToken(self.buffer,self.linea,self.columna,'guion')
@@ -110,9 +119,14 @@ class AnalizadorLexico:
             self.buffer += caracter
             self.columna += 1
         else:
-            self.agregarToken(self.buffer,self.linea,self.columna,'numero')
-            self.estado = 8
-            self.buffer += caracter
+            if self.buffer != '':
+                self.agregarToken(self.buffer,self.linea,self.columna,'numero')
+            if caracter == '>':
+                self.estado = 8
+                self.buffer += caracter
+            else:
+                self.estado = 0
+                self.i -= 1
     
     def s8(self):
         self.agregarToken(self.buffer,self.linea,self.columna,'mayorQue')
@@ -139,28 +153,33 @@ class AnalizadorLexico:
                 self.i -= 1
     
     def s10(self,caracter):
-        if (caracter.isalpha() or caracter.isdigit()) and caracter != '"' and caracter != ' ':
+        if (caracter.isalpha() or caracter.isdigit()) and caracter != '"' and caracter != ' ' and caracter != '-':
             self.estado = 10
             self.buffer += caracter
             self.columna += 1
         else:
-            self.agregarToken(self.buffer,self.linea,self.columna,'cadena')
+            if self.buffer.strip() != '':
+                self.agregarToken(self.buffer,self.linea,self.columna,'cadena')
             self.estado = 0
             self.i -= 1
+            self.buffer = self.buffer.strip()
     
     def s11(self,caracter):
-        if caracter.isdigit() and caracter != '"' and caracter != ' ':
+        if caracter.isdigit() and caracter != '"' and caracter != ' ' and caracter != '-':
             self.estado = 11
             self.buffer += caracter
             self.columna += 1
         else:
-            self.agregarToken(self.buffer,self.linea,self.columna,'numero')
+            if self.buffer.strip() != '':
+                self.agregarToken(self.buffer,self.linea,self.columna,'numero')
             self.estado = 0
             self.i -= 1
+            self.buffer = self.buffer.strip()
 
     def analizar(self,cadena):
         cadena += '$'
         self.i = 0
+        self.listaTokensC = []
         while self.i < len(cadena):
             if self.estado == 0:
                 self.s0(cadena[self.i])
