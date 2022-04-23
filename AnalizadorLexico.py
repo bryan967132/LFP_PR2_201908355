@@ -108,8 +108,13 @@ class AnalizadorLexico:
             elif caracter == '>':
                 self.estado = 8
                 self.buffer += caracter
-            else:
+            elif caracter.isdigit():
                 self.estado = 7
+            else:
+                if self.buffer.strip() != '':
+                    self.agregarError(self.buffer,self.linea,self.columna)
+                self.estado = 0
+                self.i -= 1
     
     def s6(self):
         self.agregarToken(self.buffer,self.linea,self.columna,'guion')
@@ -128,6 +133,8 @@ class AnalizadorLexico:
                 self.estado = 8
                 self.buffer += caracter
             else:
+                if self.buffer.strip() != '':
+                    self.agregarError(self.buffer,self.linea,self.columna)
                 self.estado = 0
                 self.i -= 1
     
