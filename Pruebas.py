@@ -11,19 +11,21 @@ ctrl = Ctrl(base_datos)
 
 lexico = AnalizadorLexico()
 
-comandoPrueba = 'RESULTADO "Real Madrid" VS "Villarreal" TEMPORADA <2019-2020>'
-comandoPrueba = 'JORNADA 12 TEMPORADA <2019-2020> -f jornada12Reporte'
+#comandoPrueba = 'RESULTADO "Real Madrid" VS "Villarreal" TEMPORADA <2019-2020>'
+#comandoPrueba = 'JORNADA 12 TEMPORADA <2019-2020> -f jornada12Reporte'
 #comandoPrueba = 'GOLES TOTAL "Valencia" TEMPORADA <1998-1999>'
 #comandoPrueba = 'TABLA TEMPORADA <2019-2020> -f reporteGlobal1'
 #comandoPrueba = 'PARTIDOS "Real Madrid" as5df { @ error } TEMPORADA <2019-2020> -f ReportePartidos -ji 7 -jf 10'
 #comandoPrueba = 'TOP SUPERIOR TEMPORADA <2011-2012> -n 6'
-lexico.analizar(comandoPrueba)
-lexico.imprimirTokens()
-lexico.imprimirErrores()
+while True:
+    comandoPrueba = input('Ingrese el comando: ')
+    lexico.analizar(comandoPrueba)
+    lexico.imprimirTokens()
+    lexico.imprimirErrores()
 
-sintactico = AnalizadorSintactico(ctrl,lexico.listaTokensC)
-sintactico.analizar()
-sintactico.imprimirErrores()
+    sintactico = AnalizadorSintactico(ctrl,lexico.listaTokensC)
+    sintactico.analizar()
+    sintactico.imprimirErrores()
 
 #comando1 = 'RESULTADO "Real Madrid" VS "Villarreal" TEMPORADA <2019-2020>'
 #print(comando1)

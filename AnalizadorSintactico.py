@@ -36,7 +36,7 @@ class AnalizadorSintactico:
         if not temporal:
             self.agregarError('pr_RESULTADO | pr_JORNADA | pr_GOLES | pr_TABLA | pr_PARTIDOS | pr_TOP | pr_ADIOS','EOF')
         elif temporal.tipo == 'pr_RESULTADO':
-            print('Encontrado: pr_RESULTADO')
+            self.RESULTADO()
         elif temporal.tipo == 'pr_JORNADA':
             self.JORNADA()
         elif temporal.tipo == 'pr_GOLES':
@@ -52,6 +52,86 @@ class AnalizadorSintactico:
         else:
             self.agregarError('pr_RESULTADO | pr_JORNADA | pr_GOLES | pr_TABLA | pr_PARTIDOS | pr_TOP | pr_ADIOS',temporal.tipo)
     
+    def RESULTADO(self):
+        token = self.sacarToken()
+        if token.tipo == 'pr_RESULTADO':
+            token = self.sacarToken()
+            if not token:
+                self.agregarError('nomEquipo','EOF')
+                return
+            elif token.tipo == 'nomEquipo':
+                local = token.lexema.replace('"','')
+                token = self.sacarToken()
+                if not token:
+                    self.agregarError('pr_VS','EOF')
+                    return
+                elif token.tipo == 'pr_VS':
+                    token = self.sacarToken()
+                    if not token:
+                        self.agregarError('nomEquipo','EOF')
+                        return
+                    elif token.tipo == 'nomEquipo':
+                        visitante = token.lexema.replace('"','')
+                        token = self.sacarToken()
+                        if not token:
+                            self.agregarError('pr_TEMPORADA','EOF')
+                            return
+                        elif token.tipo == 'pr_TEMPORADA':
+                            token = self.sacarToken()
+                            if not token:
+                                self.agregarError('menorQue','EOF')
+                                return
+                            elif token.tipo == 'menorQue':
+                                token = self.sacarToken()
+                                if not token:
+                                    self.agregarError('numero','EOF')
+                                    return
+                                elif token.tipo == 'numero':
+                                    if len(token.lexema) == 4:
+                                        año1 = token.lexema
+                                        token = self.sacarToken()
+                                        if not token:
+                                            self.agregarError('guion','EOF')
+                                            return
+                                        elif token.tipo == 'guion':
+                                            token = self.sacarToken()
+                                            if not token:
+                                                self.agregarError('numero','EOF')
+                                                return
+                                            elif token.tipo == 'numero':
+                                                if len(token.lexema) == 4:
+                                                    año2 = token.lexema
+                                                    token = self.sacarToken()
+                                                    if not token:
+                                                        self.agregarError('mayorQue','EOF')
+                                                        return
+                                                    elif token.tipo == 'mayorQue':
+                                                        self.ctrl.resultado(local,visitante,año1,año2)
+                                                    else:
+                                                        self.agregarError('mayorQue',token.tipo)
+                                                else:
+                                                    self.agregarError('numero de 4 cifras','numero de ' + str(len(token.lexema)) + ' cifras')
+                                            else:
+                                                self.agregarError('numero',token.tipo)
+                                        else:
+                                            self.agregarError('guion',token.tipo)
+                                    else:
+                                        self.agregarError('numero de 4 cifras','numero de ' + str(len(token.lexema)) + ' cifras')
+                                else:
+                                    self.agregarError('numero',token.tipo)
+                            else:
+                                self.agregarError('menorQue',token.tipo)
+                        else:
+                            self.agregarError('pr_TEMPORADA',token.tipo)
+                    else:
+                        self.agregarError('nomEquipo',token.tipo)
+                else:
+                    self.agregarError('pr_VS',token.tipo)
+            else:
+                self.agregarError('nomEquipo',token.tipo)
+        else:
+            self.agregarError('pr_RESULTADO',token.tipo)
+
     def JORNADA(self):
         token = self.sacarToken()
         if token.tipo == 'pr_JORNADA':
