@@ -105,6 +105,9 @@ class AnalizadorLexico:
             if caracter == '-':
                 self.estado = 6
                 self.buffer += caracter
+            elif caracter == '>':
+                self.estado = 8
+                self.buffer += caracter
             else:
                 self.estado = 7
     

@@ -135,29 +135,32 @@ class Ctrl:
                         print('Jornada',partido.getJornada(),partido.getLocal(),partido.getGolesL(),'-',partido.getVisitante(),partido.getGolesV())
     
     def top(self,condicion,año1,año2,top = 5):
-        temporada = año1 + '-' + año2
-        tabla = self.simularTemporada(temporada)
-        clasificacion = PrettyTable()
-        clasificacion.field_names = ['','Equipo','Pts.','PJ','G','E','P','GF','GC','DG']
-        if condicion == 'SUPERIOR':
-            inferior = 0
-            superior = top
-        elif condicion == 'INFERIOR':
-            inferior = len(tabla) - top
-            superior = len(tabla)
-        for i in range(inferior,superior):
-            clasificacion.add_row(
-                [
-                    i + 1,
-                    tabla[i].getEquipo(),
-                    tabla[i].getPuntos(),
-                    tabla[i].getPG() + tabla[i].getPE() + tabla[i].getPP(),
-                    tabla[i].getPG(),
-                    tabla[i].getPE(),
-                    tabla[i].getPP(),
-                    tabla[i].getGF(),
-                    tabla[i].getGC(),
-                    tabla[i].getGF() - tabla[i].getGC()
-                ]
-            )
-        print(clasificacion)
+        try:
+            temporada = año1 + '-' + año2
+            tabla = self.simularTemporada(temporada)
+            clasificacion = PrettyTable()
+            clasificacion.field_names = ['','Equipo','Pts.','PJ','G','E','P','GF','GC','DG']
+            if condicion == 'SUPERIOR':
+                inferior = 0
+                superior = top
+            elif condicion == 'INFERIOR':
+                inferior = len(tabla) - top
+                superior = len(tabla)
+            for i in range(inferior,superior):
+                clasificacion.add_row(
+                    [
+                        i + 1,
+                        tabla[i].getEquipo(),
+                        tabla[i].getPuntos(),
+                        tabla[i].getPG() + tabla[i].getPE() + tabla[i].getPP(),
+                        tabla[i].getPG(),
+                        tabla[i].getPE(),
+                        tabla[i].getPP(),
+                        tabla[i].getGF(),
+                        tabla[i].getGC(),
+                        tabla[i].getGF() - tabla[i].getGC()
+                    ]
+                )
+            print(clasificacion)
+        except:
+            pass
