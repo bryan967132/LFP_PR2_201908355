@@ -46,7 +46,7 @@ class AnalizadorSintactico:
         elif temporal.tipo == 'pr_PARTIDOS':
             self.PARTIDOS()
         elif temporal.tipo == 'pr_TOP':
-            print('Encontrado: pr_TOP')
+            self.TOP()
         elif temporal.tipo == 'pr_ADIOS':
             print('Encontrado: pr_ADIOS')
         else:
@@ -94,20 +94,21 @@ class AnalizadorSintactico:
                                         return
                                     elif token.tipo == 'mayorQue':
                                         archivo = 'partidos'
-                                        token = self.sacarToken()
-                                        if token and token.tipo == 'bandera_f':
-                                            token = self.sacarToken()
-                                            if not token:
-                                                self.agregarError('cadena','EOF')
-                                                return
-                                            elif token.tipo == 'cadena':
-                                                archivo = token.lexema.strip()
-                                            else:
-                                                self.agregarError('cadena',token.tipo)
                                         numJi = 1
                                         numJf = 38
                                         token = self.observarToken()
-                                        if token and token.tipo == 'bandera_ji' or 'bandera_jf':
+                                        if token and token.tipo == 'bandera_f' and token.tipo == 'bandera_ji' or 'bandera_jf':
+                                            token = self.observarToken()
+                                            if token and token.tipo == 'bandera_f':
+                                                token = self.sacarToken()
+                                                token = self.sacarToken()
+                                                if not token:
+                                                    self.agregarError('cadena','EOF')
+                                                    return
+                                                elif token.tipo == 'cadena':
+                                                    archivo = token.lexema.strip()
+                                                else:
+                                                    self.agregarError('cadena',token.tipo)
                                             token = self.observarToken()
                                             if token and token.tipo == 'bandera_ji':
                                                 token = self.sacarToken()
@@ -130,7 +131,6 @@ class AnalizadorSintactico:
                                                     numJf = int(token.lexema)
                                                 else:
                                                     self.agregarError('numero',token.tipo)
-
                                         self.ctrl.partidos(equipo,año1,año2,archivo,numJi,numJf)
                                     else:
                                         self.agregarError('mayorQue',token.tipo)
@@ -148,6 +148,76 @@ class AnalizadorSintactico:
                 self.agregarError('nomEquipo',token.tipo)
         else:
             self.agregarError('pr_PARTIDOS',token.tipo)
+
+    def TOP(self):
+        token = self.sacarToken()
+        if token.tipo == 'pr_TOP':
+            token = self.sacarToken()
+            if not token:
+                self.agregarError('pr_SUPERIOR | pr_INFERIOR','EOF')
+                return
+            elif token.tipo == 'pr_SUPERIOR' or token.tipo == 'pr_INFERIOR':
+                condicion = token.lexema.strip()
+                token = self.sacarToken()
+                if not token:
+                    self.agregarError('pr_SUPERIOR | pr_INFERIOR','EOF')
+                    return
+                elif token.tipo == 'pr_TEMPORADA':
+                    token = self.sacarToken()
+                    if not token:
+                        self.agregarError('menorQue','EOF')
+                        return
+                    elif token.tipo == 'menorQue':
+                        token = self.sacarToken()
+                        if not token:
+                            self.agregarError('numero','EOF')
+                            return
+                        elif token.tipo == 'numero':
+                            año1 = token.lexema
+                            token = self.sacarToken()
+                            if not token:
+                                self.agregarError('guion','EOF')
+                                return
+                            elif token.tipo == 'guion':
+                                token = self.sacarToken()
+                                if not token:
+                                    self.agregarError('numero','EOF')
+                                    return
+                                elif token.tipo == 'numero':
+                                    año2 = token.lexema
+                                    token = self.sacarToken()
+                                    if not token:
+                                        self.agregarError('mayorQue','EOF')
+                                        return
+                                    elif token.tipo == 'mayorQue':
+                                        top = 5
+                                        token = self.sacarToken()
+                                        if token and token.tipo == 'bandera_n':
+                                            token = self.sacarToken()
+                                            if not token:
+                                                self.agregarError('numero','EOF')
+                                                return
+                                            elif token.tipo == 'numero':
+                                                top = int(token.lexema)
+                                            else:
+                                                self.agregarError('numero',token.tipo)
+                                        self.ctrl.top(condicion,año1,año2,top)
+                                    else:
+                                        self.agregarError('mayorQue',token.tipo)
+                                else:
+                                    self.agregarError('numero',token.tipo)
+                            else:
+                                self.agregarError('guion',token.tipo)
+                        else:
+                            self.agregarError('numero',token.tipo)
+                    else:
+                        self.agregarError('menorQue',token.tipo)
+                else:
+                    self.agregarError('pr_TEMPORADA',token.tipo)    
+            else:
+                self.agregarError('pr_SUPERIOR | pr_INFERIOR',token.tipo)
+        else:
+            self.agregarError('pr_TOP',token.tipo)
 
     def imprimirErrores(self):
         x = PrettyTable()
