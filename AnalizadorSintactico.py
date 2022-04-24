@@ -182,7 +182,6 @@ class AnalizadorSintactico:
                                                         token = self.sacarToken()
                                                         if not token:
                                                             self.agregarError('cadena','EOF')
-                                                            return
                                                         elif token.tipo == 'cadena':
                                                             archivo = token.lexema.strip()
                                                         else:
@@ -327,7 +326,6 @@ class AnalizadorSintactico:
                                                 token = self.sacarToken()
                                                 if not token:
                                                     self.agregarError('cadena','EOF')
-                                                    return
                                                 elif token.tipo == 'cadena':
                                                     archivo = token.lexema.strip()
                                                 else:
@@ -398,41 +396,35 @@ class AnalizadorSintactico:
                                                 archivo = 'partidos'
                                                 numJi = 1
                                                 numJf = 38
-                                                token = self.observarToken()
-                                                if token and token.tipo == 'bandera_f' and token.tipo == 'bandera_ji' or 'bandera_jf':
-                                                    token = self.observarToken()
+                                                for i in range(0,len(self.listaTokens)):
+                                                    token = self.listaTokens[i]
                                                     if token and token.tipo == 'bandera_f':
-                                                        token = self.sacarToken()
-                                                        token = self.sacarToken()
-                                                        if not token:
+                                                        try:
+                                                            token = self.listaTokens[i + 1]
+                                                            if token.tipo == 'cadena':
+                                                                archivo = token.lexema
+                                                            else:
+                                                                self.agregarError('cadena',token.tipo)
+                                                        except:
                                                             self.agregarError('cadena','EOF')
-                                                            return
-                                                        elif token.tipo == 'cadena':
-                                                            archivo = token.lexema.strip()
-                                                        else:
-                                                            self.agregarError('cadena',token.tipo)
-                                                    token = self.observarToken()
-                                                    if token and token.tipo == 'bandera_ji':
-                                                        token = self.sacarToken()
-                                                        token = self.sacarToken()
-                                                        if not token:
-                                                            self.agregarError('numero','EOF')
-                                                            return
-                                                        elif token.tipo == 'numero':
-                                                            numJi = int(token.lexema)
-                                                        else:
-                                                            self.agregarError('numero',token.tipo)
-                                                    token = self.observarToken()
-                                                    if token and token.tipo == 'bandera_jf':
-                                                        token = self.sacarToken()
-                                                        token = self.sacarToken()
-                                                        if not token:
-                                                            self.agregarError('numero','EOF')
-                                                            return
-                                                        elif token.tipo == 'numero':
-                                                            numJf = int(token.lexema)
-                                                        else:
-                                                            self.agregarError('numero',token.tipo)
+                                                    elif token and token.tipo == 'bandera_ji':
+                                                        try:
+                                                            token = self.listaTokens[i + 1]
+                                                            if token.tipo == 'numero':
+                                                                numJi = int(token.lexema)
+                                                            else:
+                                                                self.agregarError('numero',token.tipo)
+                                                        except:
+                                                            self.agregarError('cadena','EOF')
+                                                    elif token and token.tipo == 'bandera_jf':
+                                                        try:
+                                                            token = self.listaTokens[i + 1]
+                                                            if token.tipo == 'numero':
+                                                                numJf = int(token.lexema)
+                                                            else:
+                                                                self.agregarError('numero',token.tipo)
+                                                        except:
+                                                            self.agregarError('cadena','EOF')
                                                 self.ctrl.partidos(equipo,año1,año2,archivo,numJi,numJf)
                                             else:
                                                 self.agregarError('mayorQue',token.tipo)
@@ -504,7 +496,6 @@ class AnalizadorSintactico:
                                                     token = self.sacarToken()
                                                     if not token:
                                                         self.agregarError('numero','EOF')
-                                                        return
                                                     elif token.tipo == 'numero':
                                                         top = int(token.lexema)
                                                     else:
