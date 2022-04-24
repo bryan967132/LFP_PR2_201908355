@@ -3,14 +3,18 @@ import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 from tkinter.filedialog import askopenfilename
+
+from regex import I
 from AnalizadorLexico import AnalizadorLexico
 from AnalizadorSintactico import AnalizadorSintactico
 from Controlador import Ctrl
 
 class Inicio:
     def __init__(self,ctrl : Ctrl):
-        self.tokens = None
-        self.errores = None
+        self.lexico = AnalizadorLexico()
+        self.tokens = []
+        self.erroresL = []
+        self.erroresS = []
         self.ctrl = ctrl
         self.fuente = 'Helvética'
 
@@ -18,55 +22,87 @@ class Inicio:
         self.raiz = tk.Tk()
         self.raiz.title('LFP - Práctica 1')
         self.raiz.resizable(0,0)
-        self.raiz.geometry('850x500')
-        self.raiz.config(bg = 'white')
+        self.raiz.geometry('900x600')
+        self.raiz.config(bg = '#131B21')
 
-        tk.Label(self.raiz,text = 'La Liga Bot',font = (self.fuente, 30),background='#0059b3',foreground = 'white').pack(fill = tk.X)
+        tk.Label(self.raiz,text = 'La Liga Bot',font = (self.fuente, 30),background='#202C33',foreground = 'white').pack(fill = tk.X)
 
-        self.areatexto = tk.Text(font = (self.fuente,12),borderwidth = 2,fg = '#0060B2')
-        self.areatexto.place(width = 500,height = 30,x = 50,y = 400)
+        w = 180
+        h = 30
+        i = 670
+        sizeFont = 10
+
+        repErr = tk.Button(self.raiz,text = 'Reporte de Errores',font = (self.fuente,sizeFont),borderwidth = 1,bg = '#1CB49C',fg = 'white',activebackground = '#1A9E8A',activeforeground = 'white',command = self.sendReportError)
+        repErr.place(width = w,height = h,x = i,y = 100)
+
+        clLErr = tk.Button(self.raiz,text = 'Limpiar Log de Errores',font = (self.fuente,sizeFont),borderwidth = 1,bg = '#1CB49C',fg = 'white',activebackground = '#1A9E8A',activeforeground = 'white',command = self.clearLogError)
+        clLErr.place(width = w,height = h,x = i,y = 140)
+
+        repTkn = tk.Button(self.raiz,text = 'Reporte de Tokens',font = (self.fuente,sizeFont),borderwidth = 1,bg = '#1CB49C',fg = 'white',activebackground = '#1A9E8A',activeforeground = 'white',command = self.sendReportToken)
+        repTkn.place(width = w,height = h,x = i,y = 180)
+
+        clLTkn = tk.Button(self.raiz,text = 'Limpiar Log de Tokens',font = (self.fuente,sizeFont),borderwidth = 1,bg = '#1CB49C',fg = 'white',activebackground = '#1A9E8A',activeforeground = 'white',command = self.clearLogToken)
+        clLTkn.place(width = w,height = h,x = i,y = 220)
+
+        mnlUsr = tk.Button(self.raiz,text = 'Manual de Usuario',font = (self.fuente,sizeFont),borderwidth = 1,bg = '#1CB49C',fg = 'white',activebackground = '#1A9E8A',activeforeground = 'white',command = self.openMnlUsr)
+        mnlUsr.place(width = w,height = h,x = i,y = 260)
+
+        mnlUsr = tk.Button(self.raiz,text = 'Manual Técnico',font = (self.fuente,sizeFont),borderwidth = 1,bg = '#1CB49C',fg = 'white',activebackground = '#1A9E8A',activeforeground = 'white',command = self.openMnlTcn)
+        mnlUsr.place(width = w,height = h,x = i,y = 300)
+
+        self.areatexto = tk.Text(font = (self.fuente,sizeFont),borderwidth = 2,fg = '#0060B2')
+        self.areatexto.place(width = 600,height = 30,x = 50,y = 520)
         
-        enviar = tk.Button(self.raiz,text = 'Enviar',font = (self.fuente,12),borderwidth = 1,bg = '#107C41',fg = 'white',activebackground = '#107C41',activeforeground = 'white',command = self.analizar)
-        enviar.place(width = 100,height = 30,x = 570,y = 400)
+        enviar = tk.Button(self.raiz,text = 'Enviar',font = (self.fuente,sizeFont),borderwidth = 1,bg = '#1CB49C',fg = 'white',activebackground = '#1A9E8A',activeforeground = 'white',command = self.analizar)
+        enviar.place(width = w,height = h,x = i,y = 520)
 
         self.raiz.mainloop()
     
     def analizar(self):
         contenido = self.areatexto.get('1.0','end').strip()
         if len(contenido) > 0:
-            lexico = AnalizadorLexico()
-            lexico.analizar(contenido)
-            self.tokens = lexico.listaTokens
-            self.errores = lexico.listaErrores
+            self.lexico.analizar(contenido)
+            self.tokens = self.lexico.listaTokens
+            self.erroresL = self.lexico.listaErrores
             if len(self.tokens) > 0:
-                sintactico = AnalizadorSintactico(self.ctrl,lexico.listaTokensC)
+                self.lexico.imprimirTokens()
+                sintactico = AnalizadorSintactico(self.ctrl,self.lexico.listaTokensC)
                 sintactico.analizar()
                 sintactico.imprimirErrores()
+                self.addSintaxErrors(sintactico.listaErrores)
                 self.clear()
             else:
                 tk.messagebox.showinfo(message = "Sin tokens detectados",title = "Tokens")
-    
-    def chooseReport(self):
-        reporte = self.combo.get()
-        if reporte == 'Manual de Usuario':
-            webbrowser.open('Manual De Usuario.pdf')
-        elif reporte == 'Manual Técnico':
-            webbrowser.open('Manual Técnico.pdf')
+
+    def sendReportError(self):
+        if len(self.erroresL) > 0 and len(self.erroresS) > 0:
+            '''Reportes().repTokens(self.tokens)'''
         else:
-            contenido = self.areatexto.get('1.0','end').strip()
-            if len(contenido) > 0:
-                if reporte == 'Reporte de Tokens':
-                    if self.tokens:
-                        '''Reportes().repTokens(self.tokens)'''
-                    else:
-                        tk.messagebox.showinfo(message = "No se encontraron tokens",title = "Análisis")
-                elif reporte == 'Reporte de Errores':
-                    if self.errores:
-                        '''Reportes().repErrores(self.errores)'''
-                    else:
-                        tk.messagebox.showinfo(message = "No se encontraron errores",title = "Análisis")
-            else:
-                tk.messagebox.showinfo(message = "No hay un archivo cargado",title = "Archivo")
+            tk.messagebox.showinfo(message = "No hay errores reconocidos",title = "Errores")
+
+    def clearLogError(self):
+        self.lexico.limpiarErrores()
+        self.erroresS = []
+
+    def sendReportToken(self):
+        if len(self.tokens) > 0:
+            '''Reportes().repTokens(self.tokens)'''
+        else:
+            tk.messagebox.showinfo(message = "No hay tokens reconocidos",title = "Tokens")
+
+    def clearLogToken(self):
+        self.lexico.limpiarTokens()
+
+    def openMnlUsr(self):
+        webbrowser.open('Manual de Usuario.pdf')
     
+    def openMnlTcn(self):
+        webbrowser.open('Manual Técnico.pdf')
+
+    def addSintaxErrors(self,errores):
+        for error in errores:
+            self.erroresS.append(error)
+    
+
     def clear(self):
         self.areatexto.delete('1.0','end')
