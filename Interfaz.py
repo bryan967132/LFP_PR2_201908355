@@ -106,6 +106,8 @@ class Chat(tk.Canvas):
 
         frameContacto.pack(pady = 15,padx = 15,fill = 'x',expand = True,anchor = 'e')
 
+        self.bienvenidaBot()
+
         self.pack(fill = 'both',expand = True)
 
     def envioMensaje(self):
@@ -142,3 +144,6 @@ class Chat(tk.Canvas):
         frameMensaje.pack(padx = 10,pady = 5,fill = 'x',expand = True,anchor = 'e')
         self.canvas.update_idletasks()
         self.canvas.yview_moveto(1.0)
+
+    def bienvenidaBot(self):
+        self.reciboMensaje('Hola soy La Liga Bot\nPregúntame lo que sea de La Liga')
