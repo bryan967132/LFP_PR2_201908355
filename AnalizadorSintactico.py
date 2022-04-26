@@ -425,6 +425,7 @@ class AnalizadorSintactico:
                                                                 self.agregarError('numero',token.tipo)
                                                         except:
                                                             self.agregarError('cadena','EOF')
+                                                self.listaTokens = []
                                                 self.ctrl.partidos(equipo,año1,año2,archivo,numJi,numJf)
                                             else:
                                                 self.agregarError('mayorQue',token.tipo)
