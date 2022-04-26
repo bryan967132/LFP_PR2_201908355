@@ -129,8 +129,6 @@ class Chat(tk.Canvas):
             self.canvas.update_idletasks()
             self.canvas.yview_moveto(1.0)
 
-            self.reciboMensaje('Respuesta')
-
     def reciboMensaje(self,message):
         frameMensaje = tk.Frame(self.frameScroll,bg = '#131B21')
         frameMensaje.columnconfigure(1,weight = 1)
@@ -147,3 +145,9 @@ class Chat(tk.Canvas):
 
     def bienvenidaBot(self):
         self.reciboMensaje('Hola soy La Liga Bot\nPregúntame lo que sea de La Liga')
+
+    def alertaBot(self):
+        self.reciboMensaje('¡Ups! No te entendí, preguntame de nuevo.')
+
+    def respuestaBot(self):
+        self.reciboMensaje('')
