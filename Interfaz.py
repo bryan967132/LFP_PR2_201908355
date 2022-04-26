@@ -93,7 +93,7 @@ class Chat(tk.Canvas):
         self.mensajeNuevo.place(width = 600,height = 30,x = 50, y = 520)
         self.mensajeNuevo.focus_set()
 
-        enviar = tk.Button(self,text = 'Enviar',bg = '#1CB49C',fg = 'white',activebackground = '#1A9E8A',activeforeground = 'white',font='lucida 11 bold',borderwidth = 0)
+        enviar = tk.Button(self,text = 'Enviar',bg = '#1CB49C',fg = 'white',activebackground = '#1A9E8A',activeforeground = 'white',font='lucida 11 bold',borderwidth = 0,command = self.envioMensaje)
         enviar.place(width = 180,height = 30,x = 670,y = 520)
 
         frameContacto = tk.Frame(self.frameScroll,bg = '#d9d5d4')
@@ -107,3 +107,22 @@ class Chat(tk.Canvas):
         frameContacto.pack(pady = 15,padx = 15,fill = 'x',expand = True,anchor = 'e')
 
         self.pack(fill = 'both',expand = True)
+
+    def envioMensaje(self):
+        mensaje = self.mensajeNuevo.get('1.0','end-1c')
+        if mensaje:
+            self.mensajeNuevo.delete('1.0','end-1c')
+            
+            frameMensaje = tk.Frame(self.frameScroll,bg = '#131B21')
+            frameMensaje.columnconfigure(0,weight = 1)
+
+            mensajeEnviado = tk.Label(frameMensaje,wraplength = 450,text = mensaje,fg = 'white',bg = '#005C4B',font = 'lucida 9 bold',justify = 'left',anchor = 'e',padx = 5,pady = 5)
+            mensajeEnviado.grid(row = 0,column = 0,padx = 2,sticky = 'e')
+
+            hora = tk.Label(frameMensaje,bg = '#131B21',fg = 'white',text = datetime.now().strftime('%H:%M'),font = 'lucida 7 bold',justify = 'right',anchor = 'e',padx = 5)
+            hora.grid(row = 1,column = 0,padx = 2,sticky = 'e')
+
+            frameMensaje.pack(padx = 10,pady = 5,fill = 'x',expand = True,anchor = 'e')
+
+            self.canvas.update_idletasks()
+            self.canvas.yview_moveto(1.0)
