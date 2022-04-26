@@ -1,19 +1,13 @@
 import tkinter as tk
 from PIL import Image,ImageTk
-from tkinter import image_names, ttk
+from tkinter import ttk
 from datetime import datetime
 from AnalizadorLexico import AnalizadorLexico
 from AnalizadorSintactico import AnalizadorSintactico
 from Controlador import Ctrl
+from Lector import Lector
 
 class Inicio:
-    def __init__(self,ctrl : Ctrl):
-        self.lexico = AnalizadorLexico()
-        self.tokens = []
-        self.erroresL = []
-        self.erroresS = []
-        self.ctrl = ctrl
-
     def iniciar(self):
         Raiz()
 
@@ -29,6 +23,8 @@ class Raiz(tk.Tk):
 class Chat(tk.Canvas):
     def __init__(self,raiz : tk.Tk,framePrincipal : tk.Frame):
         super().__init__(raiz,bg = '#202C33')
+
+        self.inicializar()
 
         self.framePrincipal = framePrincipal
         self.framePrincipal.pack_forget()
@@ -74,13 +70,13 @@ class Chat(tk.Canvas):
         repErr = tk.Button(self,text = 'Reporte de Errores',bg = '#1CB49C',fg = 'white',activebackground = '#1A9E8A',activeforeground = 'white',font='lucida 11 bold',borderwidth = 0)
         repErr.place(width = 180,height = 30,x = 670,y = 100)
 
-        clLErr = tk.Button(self,text = 'Limpiar Log de Errores',bg = '#1CB49C',fg = 'white',activebackground = '#1A9E8A',activeforeground = 'white',font='lucida 11 bold',borderwidth = 0)
+        clLErr = tk.Button(self,text = 'Limpiar Log de Errores',bg = '#1CB49C',fg = 'white',activebackground = '#1A9E8A',activeforeground = 'white',font='lucida 11 bold',borderwidth = 0,command = self.clearLogError)
         clLErr.place(width = 180,height = 30,x = 670,y = 140)
 
         repTkn = tk.Button(self,text = 'Reporte de Tokens',bg = '#1CB49C',fg = 'white',activebackground = '#1A9E8A',activeforeground = 'white',font='lucida 11 bold',borderwidth = 0)
         repTkn.place(width = 180,height = 30,x = 670,y = 180)
 
-        clLTkn = tk.Button(self,text = 'Limpiar Log de Tokens',bg = '#1CB49C',fg = 'white',activebackground = '#1A9E8A',activeforeground = 'white',font='lucida 11 bold',borderwidth = 0)
+        clLTkn = tk.Button(self,text = 'Limpiar Log de Tokens',bg = '#1CB49C',fg = 'white',activebackground = '#1A9E8A',activeforeground = 'white',font='lucida 11 bold',borderwidth = 0,command = self.clearLogTokenº)
         clLTkn.place(width = 180,height = 30,x = 670,y = 220)
 
         mnlUsr = tk.Button(self,text = 'Manual de Usuario',bg = '#1CB49C',fg = 'white',activebackground = '#1A9E8A',activeforeground = 'white',font='lucida 11 bold',borderwidth = 0)
@@ -129,11 +125,13 @@ class Chat(tk.Canvas):
             self.canvas.update_idletasks()
             self.canvas.yview_moveto(1.0)
 
-    def reciboMensaje(self,message):
+            self.analizar(mensaje)
+
+    def reciboMensaje(self,mensaje):
         frameMensaje = tk.Frame(self.frameScroll,bg = '#131B21')
         frameMensaje.columnconfigure(1,weight = 1)
 
-        mensajeRecibido = tk.Label(frameMensaje,wraplength = 450,fg = 'white',bg = '#202C33',text = message,font = 'lucida 9 bold',justify = 'left',anchor = 'w',padx = 5,pady = 5)
+        mensajeRecibido = tk.Label(frameMensaje,wraplength = 450,fg = 'white',bg = '#202C33',text = mensaje,font = 'lucida 9 bold',justify = 'left',anchor = 'w',padx = 5,pady = 5)
         mensajeRecibido.grid(row = 0,column = 1,padx = 2,sticky = 'w')
 
         hora = tk.Label(frameMensaje,bg = '#131B21',fg = 'white',text = datetime.now().strftime('%H:%M'),font = 'lucida 7 bold',justify = 'left',anchor = 'w',padx = 5)
@@ -142,6 +140,37 @@ class Chat(tk.Canvas):
         frameMensaje.pack(padx = 10,pady = 5,fill = 'x',expand = True,anchor = 'e')
         self.canvas.update_idletasks()
         self.canvas.yview_moveto(1.0)
+
+    def inicializar(self):
+        leer = Lector()
+        base_datos = leer.leer()
+        self.ctrl = Ctrl(base_datos)
+
+        self.lexico = AnalizadorLexico()
+        self.tokens = []
+        self.erroresL = []
+        self.erroresS = []
+
+    def analizar(self,comando):
+        self.lexico.analizar(comando)
+        self.tokens = self.lexico.listaTokens
+        self.erroresL = self.lexico.listaErrores
+        self.lexico.imprimirTokens()
+        sintactico = AnalizadorSintactico(self.ctrl,self.lexico.listaTokensC)
+        sintactico.analizar()
+        sintactico.imprimirErrores()
+        self.addSintaxErrors(sintactico.listaErrores)
+
+    def clearLogToken(self):
+        self.lexico.limpiarTokens()
+
+    def clearLogError(self):
+        self.lexico.limpiarErrores()
+        self.erroresS = []
+
+    def addSintaxErrors(self,errores):
+        for error in errores:
+            self.erroresS.append(error)
 
     def bienvenidaBot(self):
         self.reciboMensaje('Hola soy La Liga Bot\nPregúntame lo que sea de La Liga')
