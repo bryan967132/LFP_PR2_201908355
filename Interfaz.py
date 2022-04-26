@@ -126,3 +126,19 @@ class Chat(tk.Canvas):
 
             self.canvas.update_idletasks()
             self.canvas.yview_moveto(1.0)
+
+            self.reciboMensaje('Respuesta')
+
+    def reciboMensaje(self,message):
+        frameMensaje = tk.Frame(self.frameScroll,bg = '#131B21')
+        frameMensaje.columnconfigure(1,weight = 1)
+
+        mensajeRecibido = tk.Label(frameMensaje,wraplength = 450,fg = 'white',bg = '#202C33',text = message,font = 'lucida 9 bold',justify = 'left',anchor = 'w',padx = 5,pady = 5)
+        mensajeRecibido.grid(row = 0,column = 1,padx = 2,sticky = 'w')
+
+        hora = tk.Label(frameMensaje,bg = '#131B21',fg = 'white',text = datetime.now().strftime('%H:%M'),font = 'lucida 7 bold',justify = 'left',anchor = 'w',padx = 5)
+        hora.grid(row = 1,column = 1,padx = 2,sticky = 'w')
+
+        frameMensaje.pack(padx = 10,pady = 5,fill = 'x',expand = True,anchor = 'e')
+        self.canvas.update_idletasks()
+        self.canvas.yview_moveto(1.0)
