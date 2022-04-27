@@ -133,17 +133,16 @@ class Ctrl:
                     if partido.getLocal() == equipo:
                         encontradoE = True
                         partidos.append(partido)
-                        print('Jornada',partido.getJornada(),partido.getLocal(),partido.getGolesL(),'-',partido.getVisitante(),partido.getGolesV())
                     elif partido.getVisitante() == equipo:
                         encontradoE = True
                         partidos.append(partido)
-                        print('Jornada',partido.getJornada(),partido.getLocal(),partido.getGolesL(),'-',partido.getVisitante(),partido.getGolesV())
         if not encontradoT:
             return f'No existe la temporada {temporada} :('
         if len(partidos) == 0:
             return f'No se encontraron partidos del {equipo} de la temporada {temporada} de la jornada {numJi} a la {numJf}.'
         if not encontradoE:
             return f'No existe el equipo {equipo} en la temporada {temporada} :('
+        Reportes().repPartidos(archivo,temporada,equipo,partidos)
         return f'Generando archivo de resultados de la temporada {temporada} del {equipo}.'
     
     def top(self,condicion,año1,año2,top = 5):
