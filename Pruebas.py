@@ -15,7 +15,7 @@ lexico = AnalizadorLexico()
 #comandoPrueba = 'JORNADA 12 TEMPORADA < 2019 - 2020 > -f final12Reporte'
 #comandoPrueba = 'GOLES TOTAL "Valencia" TEMPORADA <1998-1999>'
 #comandoPrueba = 'TABLA TEMPORADA <2019-2020> -f reporteGlobal1'
-#comandoPrueba = 'PARTIDOS as5df "Real Madrid" { @ error } TEMPORADA < 2019 { #/* error } - 2020 > -f reporte20Temporada -ji 6 -jf 10'
+#comandoPrueba = 'PARTIDOS "Real Madrid" TEMPORADA <2019-2020> -f reporte20Temporada -ji 6 -jf 10'
 #comandoPrueba = 'TOP SUPERIOR TEMPORADA <2011-2012> -n 6'
 #lexico.analizar(comandoPrueba)
 #lexico.imprimirTokens()

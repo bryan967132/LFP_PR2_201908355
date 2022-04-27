@@ -6,6 +6,7 @@ from AnalizadorLexico import AnalizadorLexico
 from AnalizadorSintactico import AnalizadorSintactico
 from Controlador import Ctrl
 from Lector import Lector
+from Reportes import Reportes
 
 class Inicio:
     def iniciar(self):
@@ -67,13 +68,13 @@ class Chat(tk.Canvas):
         self.canvas.bind('<Configure>',redimensionFrame)
         self.canvas.pack(fill = 'both',expand = True)
 
-        repErr = tk.Button(self,text = 'Reporte de Errores',bg = '#1CB49C',fg = 'white',activebackground = '#1A9E8A',activeforeground = 'white',font='lucida 11 bold',borderwidth = 0)
+        repErr = tk.Button(self,text = 'Reporte de Errores',bg = '#1CB49C',fg = 'white',activebackground = '#1A9E8A',activeforeground = 'white',font='lucida 11 bold',borderwidth = 0,command = self.reporteError)
         repErr.place(width = 180,height = 30,x = 670,y = 100)
 
         clLErr = tk.Button(self,text = 'Limpiar Log de Errores',bg = '#1CB49C',fg = 'white',activebackground = '#1A9E8A',activeforeground = 'white',font='lucida 11 bold',borderwidth = 0,command = self.clearLogError)
         clLErr.place(width = 180,height = 30,x = 670,y = 140)
 
-        repTkn = tk.Button(self,text = 'Reporte de Tokens',bg = '#1CB49C',fg = 'white',activebackground = '#1A9E8A',activeforeground = 'white',font='lucida 11 bold',borderwidth = 0)
+        repTkn = tk.Button(self,text = 'Reporte de Tokens',bg = '#1CB49C',fg = 'white',activebackground = '#1A9E8A',activeforeground = 'white',font='lucida 11 bold',borderwidth = 0,command = self.reporteToken)
         repTkn.place(width = 180,height = 30,x = 670,y = 180)
 
         clLTkn = tk.Button(self,text = 'Limpiar Log de Tokens',bg = '#1CB49C',fg = 'white',activebackground = '#1A9E8A',activeforeground = 'white',font='lucida 11 bold',borderwidth = 0,command = self.clearLogToken)
@@ -163,8 +164,14 @@ class Chat(tk.Canvas):
         self.respuesta = sintactico.respuesta
         self.addSintaxErrors(sintactico.listaErrores)
 
+    def reporteToken(self):
+        Reportes().repTokens(self.tokens)
+
     def clearLogToken(self):
         self.lexico.limpiarTokens()
+
+    def reporteError(self):
+        Reportes().repErrores(self.erroresL,self.erroresS)
 
     def clearLogError(self):
         self.lexico.limpiarErrores()
