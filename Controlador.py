@@ -1,5 +1,6 @@
 from prettytable import PrettyTable
 from Posicion import Posicion
+from Reportes import Reportes
 class Ctrl:
     def __init__(self,db):
         self.db = db
@@ -16,16 +17,18 @@ class Ctrl:
         temporada = año1 + '-' + año2
         encontradoT = False
         encontradoJ = False
+        partidos = []
         for partido in self.db:
             if partido.getTemporada() == temporada:
                 encontradoT = True
                 if partido.getJornada() == numero:
                     encontradoJ = True
-                    print(partido.getJornada(),partido.getLocal(),partido.getGolesL(),'-',partido.getVisitante(),partido.getGolesV())
+                    partidos.append(partido)
         if not encontradoT:
             return f'No existe la temporada {temporada} :('
         if not encontradoJ:
             return f'No existe la jornada {numero} de la temporada {temporada} :('
+        Reportes().repJornada(archivo,temporada,numero,partidos)
         return f'Generando archivo de resultados jornada {numero} temporada {temporada}.'
     
     def goles(self,condicion,equipo,año1,año2):
