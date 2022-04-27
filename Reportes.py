@@ -68,6 +68,83 @@ class Reportes:
 </html>"""
         open(archivo,'w',encoding = 'utf-8').write(html)
         webbrowser.open(archivo)
+    
+    def repTabla(self,archivo,temporada,tabla):
+        html = """<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Temporada """ + temporada + """</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--===============================================================================================-->	
+        <link rel="icon" type="image/png" href="Reporte/images/icons/logousac.png"/>
+    <!--===============================================================================================-->
+        <link rel="stylesheet" type="text/css" href="Reporte/vendor/bootstrap/css/bootstrap.min.css">
+    <!--===============================================================================================-->
+        <link rel="stylesheet" type="text/css" href="Reporte/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <!--===============================================================================================-->
+        <link rel="stylesheet" type="text/css" href="Reporte/vendor/animate/animate.css">
+    <!--===============================================================================================-->
+        <link rel="stylesheet" type="text/css" href="Reporte/vendor/select2/select2.min.css">
+    <!--===============================================================================================-->
+        <link rel="stylesheet" type="text/css" href="Reporte/vendor/perfect-scrollbar/perfect-scrollbar.css">
+    <!--===============================================================================================-->
+        <link rel="stylesheet" type="text/css" href="Reporte/css/util.css">
+        <link rel="stylesheet" type="text/css" href="Reporte/css/main.css">
+    <!--===============================================================================================-->
+    </head>
+    <body>
+        <div class="limiter">
+            <div class="container-table100">
+                <div class="wrap-table100">
+                    <p style="color:#fff;margin-bottom:15px;font-size:30px">Resumen Temporada """ + temporada + """</p>
+                    <div class="table100">
+                        <table style="margin-bottom: 50px;">
+                            <thead>
+                                <tr class="table100-head">
+                                    <th class="column1"></th>
+                                    <th class="column3">Equipo</th>
+                                    <th class="column2">Pts.</th>
+                                    <th class="column2">PJ</th>
+                                    <th class="column2">G</th>
+                                    <th class="column2">E</th>
+                                    <th class="column2">P</th>
+                                    <th class="column2">GF</th>
+                                    <th class="column2">GC</th>
+                                    <th class="column6">DG</th>
+                                </tr>
+                            </thead>
+                            <tbody>"""
+        for i in range(len(tabla)):
+            html += """
+                                <tr>
+                                    <td class="column1">""" + str(i + 1) + """</td>
+                                    <th class="column3">""" + tabla[i].getEquipo() + """</th>
+                                    <td class="column2">""" + str(tabla[i].getPuntos()) + """</td>
+                                    <td class="column2">""" + str(tabla[i].getPG() + tabla[i].getPE() + tabla[i].getPP()) + """</td>
+                                    <th class="column2">""" + str(tabla[i].getPG()) + """</th>
+                                    <th class="column2">""" + str(tabla[i].getPE()) + """</th>
+                                    <th class="column2">""" + str(tabla[i].getPP()) + """</th>
+                                    <th class="column2">""" + str(tabla[i].getGF()) + """</th>
+                                    <th class="column2">""" + str(tabla[i].getGC()) + """</th>
+                                    <td class="column6">""" + str(tabla[i].getGF() - tabla[i].getGC()) + """</td>
+                                </tr>"""
+        html += """
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="Reporte/vendor/jquery/jquery-3.2.1.min.js"></script>
+        <script src="Reporte/vendor/bootstrap/js/popper.js"></script>
+        <script src="Reporte/vendor/bootstrap/js/bootstrap.min.js"></script>
+        <script src="Reporte/vendor/select2/select2.min.js"></script>
+        <script src="Reporte/js/main.js"></script>
+    </body>
+</html>"""
+        open(archivo,'w',encoding = 'utf-8').write(html)
+        webbrowser.open(archivo)
 
     def repTokens(self,tokens):
         html = """<!DOCTYPE html>

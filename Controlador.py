@@ -69,24 +69,7 @@ class Ctrl:
         tabla = self.simularTemporada(temporada)
         if len(tabla) == 0:
             return f'No hay partidos de la temporada {temporada}.'
-        clasificacion = PrettyTable()
-        clasificacion.field_names = ['','Equipo','Pts.','PJ','G','E','P','GF','GC','DG']
-        for i in range(len(tabla)):
-            clasificacion.add_row(
-                [
-                    i + 1,
-                    tabla[i].getEquipo(),
-                    tabla[i].getPuntos(),
-                    tabla[i].getPG() + tabla[i].getPE() + tabla[i].getPP(),
-                    tabla[i].getPG(),
-                    tabla[i].getPE(),
-                    tabla[i].getPP(),
-                    tabla[i].getGF(),
-                    tabla[i].getGC(),
-                    tabla[i].getGF() - tabla[i].getGC()
-                ]
-            )
-        print(clasificacion)
+        Reportes().repTabla(archivo,temporada,tabla)
         return f'Generando archivo de clasificación de temporada {temporada}.'
 
     def simularTemporada(self,temporada):
