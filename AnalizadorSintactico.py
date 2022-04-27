@@ -50,7 +50,7 @@ class AnalizadorSintactico:
         elif temporal.tipo == 'pr_TOP':
             self.TOP()
         elif temporal.tipo == 'pr_ADIOS':
-            quit()
+            self.respuesta = 'ADIOS'
         else:
             self.agregarError('pr_RESULTADO | pr_JORNADA | pr_GOLES | pr_TABLA | pr_PARTIDOS | pr_TOP | pr_ADIOS',temporal.tipo)
             self.respuesta = '¡Ups! No te entendí, pregúntame de nuevo.'

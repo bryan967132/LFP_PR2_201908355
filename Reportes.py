@@ -1,5 +1,7 @@
 import webbrowser
 class Reportes:
+    
+
     def repTokens(self,tokens):
         html = """<!DOCTYPE html>
 <html lang="en">

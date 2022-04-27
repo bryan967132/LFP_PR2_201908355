@@ -1,4 +1,5 @@
 import tkinter as tk
+import time
 from PIL import Image,ImageTk
 from tkinter import ttk
 from datetime import datetime
@@ -143,6 +144,11 @@ class Chat(tk.Canvas):
         self.canvas.update_idletasks()
         self.canvas.yview_moveto(1.0)
 
+        if mensaje == 'ADIOS':
+            for i in range(10):
+                time.sleep(0.1)
+            quit()
+
     def inicializar(self):
         leer = Lector()
         base_datos = leer.leer()
@@ -157,10 +163,8 @@ class Chat(tk.Canvas):
         self.lexico.analizar(comando)
         self.tokens = self.lexico.listaTokens
         self.erroresL = self.lexico.listaErrores
-        self.lexico.imprimirTokens()
         sintactico = AnalizadorSintactico(self.ctrl,self.lexico.listaTokensC)
         sintactico.analizar()
-        sintactico.imprimirErrores()
         self.respuesta = sintactico.respuesta
         self.addSintaxErrors(sintactico.listaErrores)
 
