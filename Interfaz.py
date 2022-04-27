@@ -169,12 +169,14 @@ class Chat(tk.Canvas):
 
     def clearLogToken(self):
         self.lexico.limpiarTokens()
+        self.tokens = []
 
     def reporteError(self):
         Reportes().repErrores(self.erroresL,self.erroresS)
 
     def clearLogError(self):
         self.lexico.limpiarErrores()
+        self.erroresL = []
         self.erroresS = []
 
     def addSintaxErrors(self,errores):
