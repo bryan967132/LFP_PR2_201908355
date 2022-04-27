@@ -76,7 +76,7 @@ class Chat(tk.Canvas):
         repTkn = tk.Button(self,text = 'Reporte de Tokens',bg = '#1CB49C',fg = 'white',activebackground = '#1A9E8A',activeforeground = 'white',font='lucida 11 bold',borderwidth = 0)
         repTkn.place(width = 180,height = 30,x = 670,y = 180)
 
-        clLTkn = tk.Button(self,text = 'Limpiar Log de Tokens',bg = '#1CB49C',fg = 'white',activebackground = '#1A9E8A',activeforeground = 'white',font='lucida 11 bold',borderwidth = 0,command = self.clearLogTokenº)
+        clLTkn = tk.Button(self,text = 'Limpiar Log de Tokens',bg = '#1CB49C',fg = 'white',activebackground = '#1A9E8A',activeforeground = 'white',font='lucida 11 bold',borderwidth = 0,command = self.clearLogToken)
         clLTkn.place(width = 180,height = 30,x = 670,y = 220)
 
         mnlUsr = tk.Button(self,text = 'Manual de Usuario',bg = '#1CB49C',fg = 'white',activebackground = '#1A9E8A',activeforeground = 'white',font='lucida 11 bold',borderwidth = 0)
@@ -126,6 +126,7 @@ class Chat(tk.Canvas):
             self.canvas.yview_moveto(1.0)
 
             self.analizar(mensaje)
+            self.reciboMensaje(self.respuesta)
 
     def reciboMensaje(self,mensaje):
         frameMensaje = tk.Frame(self.frameScroll,bg = '#131B21')
@@ -159,6 +160,7 @@ class Chat(tk.Canvas):
         sintactico = AnalizadorSintactico(self.ctrl,self.lexico.listaTokensC)
         sintactico.analizar()
         sintactico.imprimirErrores()
+        self.respuesta = sintactico.respuesta
         self.addSintaxErrors(sintactico.listaErrores)
 
     def clearLogToken(self):
@@ -174,9 +176,3 @@ class Chat(tk.Canvas):
 
     def bienvenidaBot(self):
         self.reciboMensaje('Hola soy La Liga Bot\nPregúntame lo que sea de La Liga')
-
-    def alertaBot(self):
-        self.reciboMensaje('¡Ups! No te entendí, preguntame de nuevo.')
-
-    def respuestaBot(self):
-        self.reciboMensaje('')

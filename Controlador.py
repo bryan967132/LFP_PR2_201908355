@@ -8,16 +8,25 @@ class Ctrl:
         temporada = año1 + '-' + año2
         for partido in self.db:
             if partido.getLocal() == local and partido.getVisitante() == visitante and partido.getTemporada() == temporada:
-                print('El resultado del partido fue:',partido.getLocal(),partido.getGolesL(),'-',partido.getVisitante(),partido.getGolesV())
-                return
-        print('No hay resgistro del partido')
+                return f'El resultado del partido fue: {partido.getLocal()} {partido.getGolesL()} - {partido.getVisitante()} {partido.getGolesV()}.'
+        return 'No hay resgistro del partido.'
     
     def jornada(self,numero,año1,año2,archivo = 'jornada'):
         archivo += '.html'
         temporada = año1 + '-' + año2
+        encontradoT = False
+        encontradoJ = False
         for partido in self.db:
-            if partido.getTemporada() == temporada and partido.getJornada() == numero:
-                print(partido.getJornada(),partido.getLocal(),partido.getGolesL(),'-',partido.getVisitante(),partido.getGolesV())
+            if partido.getTemporada() == temporada:
+                encontradoT = True
+                if partido.getJornada() == numero:
+                    encontradoJ = True
+                    print(partido.getJornada(),partido.getLocal(),partido.getGolesL(),'-',partido.getVisitante(),partido.getGolesV())
+        if not encontradoT:
+            return f'No existe la temporada {temporada} :('
+        if not encontradoJ:
+            return f'No existe la jornada {numero} de la temporada {temporada} :('
+        return f'Generando archivo de resultados jornada {numero} temporada {temporada}.'
     
     def goles(self,condicion,equipo,año1,año2):
         temporada = año1 + '-' + año2
@@ -29,11 +38,11 @@ class Ctrl:
                         goles += partido.getGolesL()
                     elif partido.getVisitante() == equipo:
                         goles += partido.getGolesV()
-            print('Los goles anotados por',equipo,'en total en la temporada',temporada,'fueron',goles)
+            return f'Los goles anotados por el {equipo} en total en la temporada {temporada} fueron {goles}.'
         elif condicion == 'LOCAL':
-            self.golesL(equipo,temporada)
+            return self.golesL(equipo,temporada)
         elif condicion == 'VISITANTE':
-            self.golesV(equipo,temporada)
+            return self.golesV(equipo,temporada)
     
     def golesL(self,equipo,temporada):
         goles = 0
@@ -41,7 +50,7 @@ class Ctrl:
             if partido.getTemporada() == temporada:
                 if partido.getLocal() == equipo:
                     goles += partido.getGolesL()
-        print('Los goles anotados por',equipo,'de local en la temporada',temporada,'fueron',goles)
+        return f'Los goles anotados por el {equipo} de local en la temporada {temporada} fueron {goles}.'
 
     def golesV(self,equipo,temporada):
         goles = 0
@@ -49,13 +58,14 @@ class Ctrl:
             if partido.getTemporada() == temporada:
                 if partido.getVisitante() == equipo:
                     goles += partido.getGolesV()
-        print('Los goles anotados por',equipo,'de visitante en la temporada',temporada,'fueron',goles)
+        return f'Los goles anotados por el {equipo} de visitante en la temporada {temporada} fueron {goles}.'
     
     def tabla(self,año1,año2,archivo = 'temporada'):
         archivo += '.html'
         temporada = año1 + '-' + año2
         tabla = self.simularTemporada(temporada)
-
+        if len(tabla) == 0:
+            return f'No hay partidos de la temporada {temporada}.'
         clasificacion = PrettyTable()
         clasificacion.field_names = ['','Equipo','Pts.','PJ','G','E','P','GF','GC','DG']
         for i in range(len(tabla)):
@@ -74,6 +84,7 @@ class Ctrl:
                 ]
             )
         print(clasificacion)
+        return f'Generando archivo de clasificación de temporada {temporada}.'
 
     def simularTemporada(self,temporada):
         tabla = []
@@ -126,41 +137,41 @@ class Ctrl:
     def partidos(self,equipo,año1,año2,archivo = 'partidos',numJi = 1,numJf = 38):
         archivo += '.html'
         temporada = año1 + '-' + año2
+        encontradoT = False
+        encontradoE = False
+        partidos = []
         for partido in self.db:
             if partido.getTemporada() == temporada:
+                encontradoT = True
                 if partido.getJornada() >= numJi and partido.getJornada() <= numJf:
                     if partido.getLocal() == equipo:
+                        encontradoE = True
+                        partidos.append(partido)
                         print('Jornada',partido.getJornada(),partido.getLocal(),partido.getGolesL(),'-',partido.getVisitante(),partido.getGolesV())
                     elif partido.getVisitante() == equipo:
+                        encontradoE = True
+                        partidos.append(partido)
                         print('Jornada',partido.getJornada(),partido.getLocal(),partido.getGolesL(),'-',partido.getVisitante(),partido.getGolesV())
+        if not encontradoT:
+            return f'No existe la temporada {temporada} :('
+        if len(partidos) == 0:
+            return f'No se encontraron partidos del {equipo} de la temporada {temporada} de la jornada {numJi} a la {numJf}.'
+        if not encontradoE:
+            return f'No existe el equipo {equipo} en la temporada {temporada} :('
+        return f'Generando archivo de resultados de la temporada {temporada} del {equipo}.'
     
     def top(self,condicion,año1,año2,top = 5):
-        try:
-            temporada = año1 + '-' + año2
-            tabla = self.simularTemporada(temporada)
-            clasificacion = PrettyTable()
-            clasificacion.field_names = ['','Equipo','Pts.','PJ','G','E','P','GF','GC','DG']
-            if condicion == 'SUPERIOR':
-                inferior = 0
-                superior = top
-            elif condicion == 'INFERIOR':
-                inferior = len(tabla) - top
-                superior = len(tabla)
-            for i in range(inferior,superior):
-                clasificacion.add_row(
-                    [
-                        i + 1,
-                        tabla[i].getEquipo(),
-                        tabla[i].getPuntos(),
-                        tabla[i].getPG() + tabla[i].getPE() + tabla[i].getPP(),
-                        tabla[i].getPG(),
-                        tabla[i].getPE(),
-                        tabla[i].getPP(),
-                        tabla[i].getGF(),
-                        tabla[i].getGC(),
-                        tabla[i].getGF() - tabla[i].getGC()
-                    ]
-                )
-            print(clasificacion)
-        except:
-            pass
+        temporada = año1 + '-' + año2
+        tabla = self.simularTemporada(temporada)
+        if len(tabla) == 0:
+            return f'No hay partidos de la temporada {temporada}.'
+        if condicion == 'SUPERIOR':
+            inferior = 0
+            superior = top
+        elif condicion == 'INFERIOR':
+            inferior = len(tabla) - top
+            superior = len(tabla)
+        clasificacion = f'Top {top} de la temporada {temporada}'
+        for i in range(inferior,superior):
+            clasificacion += f'\n{i + 1}. {tabla[i].getEquipo()}'
+        return clasificacion
