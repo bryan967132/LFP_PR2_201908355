@@ -17,6 +17,7 @@ class Raiz(tk.Tk):
     def __init__(self):
         super().__init__()
         self.resizable(0,0)
+        self.title('LaLigaBot')
         self.framePrincipal = tk.Frame(self)
         self.framePrincipal.pack()
         Chat(self,self.framePrincipal)
