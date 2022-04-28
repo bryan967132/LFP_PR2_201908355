@@ -4,7 +4,7 @@ class Reportes:
         html = """<!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Jornada """ + str(jornada) + """ Temporada """ + temporada + """</title>
+        <title>""" + archivo.replace('.html','') + """</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
     <!--===============================================================================================-->	
@@ -73,7 +73,7 @@ class Reportes:
         html = """<!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Temporada """ + temporada + """</title>
+        <title>""" + archivo.replace('.html','') + """</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
     <!--===============================================================================================-->	
@@ -150,7 +150,7 @@ class Reportes:
         html = """<!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>""" + equipo + """ """ + temporada + """</title>
+        <title>""" + archivo.replace('.html','') + """</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
     <!--===============================================================================================-->	
