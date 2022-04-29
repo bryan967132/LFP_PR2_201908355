@@ -1,5 +1,6 @@
 import tkinter as tk
 import time
+import webbrowser
 from PIL import Image,ImageTk
 from tkinter import ttk
 from datetime import datetime
@@ -82,10 +83,10 @@ class Chat(tk.Canvas):
         clLTkn = tk.Button(self,text = 'Limpiar Log de Tokens',bg = '#1CB49C',fg = 'white',activebackground = '#1A9E8A',activeforeground = 'white',font='lucida 11 bold',borderwidth = 0,command = self.clearLogToken)
         clLTkn.place(width = 180,height = 30,x = 670,y = 220)
 
-        mnlUsr = tk.Button(self,text = 'Manual de Usuario',bg = '#1CB49C',fg = 'white',activebackground = '#1A9E8A',activeforeground = 'white',font='lucida 11 bold',borderwidth = 0)
+        mnlUsr = tk.Button(self,text = 'Manual de Usuario',bg = '#1CB49C',fg = 'white',activebackground = '#1A9E8A',activeforeground = 'white',font='lucida 11 bold',borderwidth = 0,command = self.abrirMnlUsr)
         mnlUsr.place(width = 180,height = 30,x = 670,y = 260)
 
-        mnlTcn = tk.Button(self,text = 'Manual Técnico',bg = '#1CB49C',fg = 'white',activebackground = '#1A9E8A',activeforeground = 'white',font='lucida 11 bold',borderwidth = 0)
+        mnlTcn = tk.Button(self,text = 'Manual Técnico',bg = '#1CB49C',fg = 'white',activebackground = '#1A9E8A',activeforeground = 'white',font='lucida 11 bold',borderwidth = 0,command = self.abrirMnlTcn)
         mnlTcn.place(width = 180,height = 30,x = 670,y = 300)
 
         self.mensajeNuevo = tk.Text(self,font = 'lucida 10',highlightcolor = 'blue',highlightthickness = 0)
@@ -190,3 +191,9 @@ class Chat(tk.Canvas):
 
     def bienvenidaBot(self):
         self.reciboMensaje('Hola soy La Liga Bot\nPregúntame lo que sea de La Liga')
+
+    def abrirMnlUsr(self):
+        webbrowser.open('Manual De Usuario.pdf')
+
+    def abrirMnlTcn(self):
+        webbrowser.open('Manual Técnico.pdf')
