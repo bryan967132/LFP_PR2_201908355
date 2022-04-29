@@ -37,19 +37,19 @@ class AnalizadorLexico:
             self.buffer += caracter
             self.columna += 1
         elif caracter == '<':
-            self.estado = 4
-            self.buffer += caracter
-            self.columna += 1
-        elif caracter.isdigit():
             self.estado = 5
             self.buffer += caracter
             self.columna += 1
-        elif caracter == '-':
+        elif caracter.isdigit():
             self.estado = 6
             self.buffer += caracter
             self.columna += 1
-        elif caracter == '>':
+        elif caracter == '-':
             self.estado = 7
+            self.buffer += caracter
+            self.columna += 1
+        elif caracter == '>':
+            self.estado = 8
             self.buffer += caracter
             self.columna += 1
         elif caracter == '\n':
@@ -78,29 +78,34 @@ class AnalizadorLexico:
                 self.estado = 0
                 self.i -= 1
     
-    def s2(self,caracter):
+    def s2(self):
+        self.estado = 3
+        self.columna += 1
+        self.i -= 1
+
+    def s3(self,caracter):
         if caracter != '"':
-            self.estado = 2
-            self.buffer += caracter
-            self.columna += 1
-        elif caracter == '"':
             self.estado = 3
             self.buffer += caracter
             self.columna += 1
+        else:
+            self.estado = 4
+            self.buffer += caracter
+            self.columna += 1
     
-    def s3(self):
+    def s4(self):
         self.agregarToken(self.buffer,self.linea,self.columna,'nomEquipo')
         self.estado = 0
         self.i -= 1
     
-    def s4(self):
+    def s5(self):
         self.agregarToken(self.buffer,self.linea,self.columna,'menorQue')
         self.estado = 0
         self.i -= 1
     
-    def s5(self,caracter):
+    def s6(self,caracter):
         if caracter.isdigit():
-            self.estado = 5
+            self.estado = 6
             self.buffer += caracter
             self.columna += 1
         else:
@@ -108,31 +113,31 @@ class AnalizadorLexico:
             self.estado = 0
             self.i -= 1
     
-    def s6(self,caracter):
+    def s7(self,caracter):
         if caracter.isdigit() or caracter in ['\t',' ']:
             self.agregarToken(self.buffer,self.linea,self.columna,'guion')
             self.estado = 0
             self.columna += 1
             self.i -= 1
         else:
-            self.estado = 8
+            self.estado = 9
             self.buffer += caracter
             self.columna += 1
     
-    def s7(self):
+    def s8(self):
         self.agregarToken(self.buffer,self.linea,self.columna,'mayorQue')
         self.estado = 0
         self.i -= 1
     
-    def s8(self,caracter):
+    def s9(self,caracter):
         if caracter.isalpha() or caracter.isdigit():
-            self.estado = 8
+            self.estado = 9
             self.buffer += caracter
             self.columna += 1
         else:
             if self.buffer in ['-f']:
                 self.agregarToken(self.buffer,self.linea,self.columna,'bandera_' + self.buffer.replace('-',''))
-                self.estado = 9
+                self.estado = 10
                 self.columna += 1
             elif self.buffer in ['-ji','-jf','-n']:
                 self.agregarToken(self.buffer,self.linea,self.columna,'bandera_' + self.buffer.replace('-',''))
@@ -143,9 +148,9 @@ class AnalizadorLexico:
                 self.estado = 0
                 self.i -= 1
     
-    def s9(self,caracter):
+    def s10(self,caracter):
         if caracter.isalpha() or caracter.isdigit():
-            self.estado = 9
+            self.estado = 10
             self.buffer += caracter
             self.columna += 1
         else:
@@ -158,27 +163,31 @@ class AnalizadorLexico:
         cadena += '$'
         self.i = 0
         self.listaTokensC = []
+        self.linea = 1
+        self.columna = 1
         while self.i < len(cadena):
             if self.estado == 0:
                 self.s0(cadena[self.i])
             elif self.estado == 1:
                 self.s1(cadena[self.i])
             elif self.estado == 2:
-                self.s2(cadena[self.i])
+                self.s2()
             elif self.estado == 3:
-                self.s3()
+                self.s3(cadena[self.i])
             elif self.estado == 4:
                 self.s4()
             elif self.estado == 5:
-                self.s5(cadena[self.i])
+                self.s5()
             elif self.estado == 6:
                 self.s6(cadena[self.i])
             elif self.estado == 7:
-                self.s7()
+                self.s7(cadena[self.i])
             elif self.estado == 8:
-                self.s8(cadena[self.i])
+                self.s8()
             elif self.estado == 9:
                 self.s9(cadena[self.i])
+            elif self.estado == 10:
+                self.s10(cadena[self.i])
             self.i += 1
 
     def imprimirTokens(self):
